@@ -39,6 +39,7 @@ let dataTable = null;
 let keyboardMapping = {};
 let currentTypingBuffer = '';
 let isShiftPressed = false;
+let bufferTimeout = null; // Timeout for buffer recognition
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -68,6 +69,18 @@ function loadKeyboardMapping() {
         .catch(error => console.error('Error loading keyboard mapping:', error));
 }
 
+// Get English mapping for Amharic character
+function getEnglishForAmharic(amharicChar) {
+    // Search through keyboardMappingData to find English equivalent
+    for (const [amharic, keys] of Object.entries(keyboardMappingData)) {
+        if (amharic === amharicChar && keys[0]) {
+            // Return the first mapping (base form without shift)
+            return keys[0].replace('shift+', '');
+        }
+    }
+    return '?'; // Fallback if not found
+}
+
 // Initialize Virtual Keyboard
 function initializeKeyboard() {
     const container = document.getElementById('keyboard-container');
@@ -94,12 +107,15 @@ function initializeKeyboard() {
 
     // Create key buttons
     keyboardRows.forEach(row => {
-        row.forEach(key => {
+        row.forEach(amharicChar => {
             const btn = document.createElement('button');
-            btn.textContent = key;
+            const englishLetter = getEnglishForAmharic(amharicChar);
+            
+            // Display: English letter with Amharic superscript
+            btn.innerHTML = `${englishLetter}<sup>${amharicChar}</sup>`;
             btn.className = 'key-btn';
             btn.type = 'button';
-            btn.addEventListener('click', () => addCharacter(key));
+            btn.addEventListener('click', () => addCharacter(amharicChar));
             container.appendChild(btn);
         });
     });
@@ -162,16 +178,19 @@ function handleKeyboardInput(event) {
     
     // Handle special keys
     if (event.key === 'Backspace') {
+        if (bufferTimeout) clearTimeout(bufferTimeout);
         currentTypingBuffer = '';
         return; // Let default backspace work
     }
     
     if (event.key === 'Enter') {
+        if (bufferTimeout) clearTimeout(bufferTimeout);
         currentTypingBuffer = '';
         return; // Let default enter work
     }
     
     if (event.key === ' ') {
+        if (bufferTimeout) clearTimeout(bufferTimeout);
         currentTypingBuffer = '';
         return; // Let default space work
     }
@@ -184,10 +203,22 @@ function handleKeyboardInput(event) {
     // Prevent default text input
     event.preventDefault();
     
+    // Clear existing timeout
+    if (bufferTimeout) clearTimeout(bufferTimeout);
+    
     // Add to buffer
     currentTypingBuffer += key;
     
-    // Check if buffer matches a mapping
+    // Set a 0.3 second timeout to attempt to map the buffer
+    bufferTimeout = setTimeout(() => {
+        processTypingBuffer();
+    }, 300);
+}
+
+// Process the typing buffer after timeout
+function processTypingBuffer() {
+    if (currentTypingBuffer.length === 0) return;
+    
     let found = false;
     
     // Try with shift if pressed
@@ -207,14 +238,29 @@ function handleKeyboardInput(event) {
         found = true;
     }
     
-    // If buffer is getting too long, clear it
-    if (currentTypingBuffer.length > 5) {
-        // If no match found, insert the last character as-is and keep the rest in buffer
-        if (!found && currentTypingBuffer.length > 1) {
-            currentTypingBuffer = currentTypingBuffer.slice(-1);
-        } else if (!found) {
+    // If no mapping found, try to break it down
+    if (!found && currentTypingBuffer.length > 1) {
+        // Try mapping the first character
+        const firstChar = currentTypingBuffer[0];
+        const shiftFirst = 'shift+' + firstChar;
+        
+        if (isShiftPressed && keyboardMapping[shiftFirst]) {
+            addCharacter(keyboardMapping[shiftFirst]);
+            currentTypingBuffer = currentTypingBuffer.slice(1);
+            // Recursively process remaining buffer
+            setTimeout(processTypingBuffer, 300);
+        } else if (keyboardMapping[firstChar]) {
+            addCharacter(keyboardMapping[firstChar]);
+            currentTypingBuffer = currentTypingBuffer.slice(1);
+            // Recursively process remaining buffer
+            setTimeout(processTypingBuffer, 300);
+        } else {
+            // First char has no mapping, just clear buffer
             currentTypingBuffer = '';
         }
+    } else if (!found) {
+        // Single character with no mapping, clear it
+        currentTypingBuffer = '';
     }
 }
 
