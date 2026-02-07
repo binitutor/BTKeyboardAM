@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BT Amharic Keyboard - A responsive, modern web-based virtual keyboard for typing Amharic language with comprehensive typing statistics, history tracking, and data visualization using Bootstrap 5.3, Chart.js, and DataTables.">
+    <meta name="author" content="Biniam Alemayehu">
+    <meta name="keywords" content="Amharic, keyboard, typing, virtual keyboard, Amharic typing, Amharic language, Fidel, keyboard layout">
+    <meta name="theme-color" content="#234756">
+    <title>BT Amharic Keyboard - Type Amharic with Ease</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.css" rel="stylesheet">
+    
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fff; border-bottom: 2px solid #EAEAEA;">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#" style="color: #234756;">
+                <i class="fas fa-keyboard"></i> BT Amharic Keyboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#keyboard" style="color: #234756;">Keyboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#statistics" style="color: #234756;">Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#history" style="color: #234756;">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mapping-guide.html" style="color: #234756;">Mapping Guide</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid" style="background-color: #fff; min-height: 100vh; padding: 20px 0;">
+        
+        <!-- Header Section -->
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h1 style="color: #234756; font-weight: 700; margin-bottom: 10px;">BT Amharic Keyboard</h1>
+                    <p style="color: #666; font-size: 18px;">Type in Amharic with ease and efficiency</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Section -->
+        <section id="keyboard" class="container my-5">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px;">
+                        <div class="card-header" style="background-color: #234756; border-radius: 10px 10px 0 0; padding: 20px;">
+                            <h5 class="mb-0" style="color: #fff;"><i class="fas fa-edit"></i> Text Input Area</h5>
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <!-- Keyboard Mapping Info -->
+                            <div class="alert" style="background-color: #fff; border: 2px solid #234756; color: #234756; border-radius: 8px; margin-bottom: 20px;">
+                                <i class="fas fa-keyboard"></i> <strong>Tip:</strong> Type in English (e.g., "ha", "le", "me") to automatically convert to Amharic! <a href="mapping-guide.html" style="color: #C66F3D; font-weight: 600;">View all mappings</a>
+                            </div>
+
+                            <!-- Text Display Area -->
+                            <div class="mb-3">
+                                <label for="textDisplay" class="form-label" style="color: #234756; font-weight: 600;">Your Text:</label>
+                                <textarea class="form-control" id="textDisplay" rows="4" placeholder="Type here or use the virtual keyboard below..." style="background-color: #fff; color: #234756; border: 2px solid #C66F3D; font-size: 16px;"></textarea>
+                            </div>
+
+                            <!-- Control Buttons -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between mb-4">
+                                <button class="btn btn-lg" id="clearBtn" style="background-color: #C66F3D; color: #fff; border: none;">
+                                    <i class="fas fa-trash-alt"></i> Clear
+                                </button>
+                                <button class="btn btn-lg" id="copyBtn" style="background-color: #234756; color: #fff; border: none;">
+                                    <i class="fas fa-copy"></i> Copy to Clipboard
+                                </button>
+                                <button class="btn btn-lg" id="downloadBtn" style="background-color: #234756; color: #fff; border: none;">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+
+                            <!-- Character Count -->
+                            <div class="alert" style="background-color: #fff; border: 2px solid #234756; color: #234756; border-radius: 8px;">
+                                <i class="fas fa-info-circle"></i> <strong>Characters:</strong> <span id="charCount">0</span> | <strong>Words:</strong> <span id="wordCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Virtual Keyboard -->
+            <div class="row mt-5">
+                <div class="col-lg-10 mx-auto">
+                    <div class="card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px;">
+                        <div class="card-header" style="background-color: #234756; border-radius: 10px 10px 0 0; padding: 20px;">
+                            <h5 class="mb-0" style="color: #fff;"><i class="fas fa-keyboard"></i> Virtual Amharic Keyboard</h5>
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <div id="keyboard-container" class="keyboard-grid">
+                                <!-- Keyboard will be generated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="statistics" class="container my-5">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 style="color: #234756; font-weight: 700;">
+                        <i class="fas fa-chart-bar"></i> Typing Statistics
+                    </h2>
+                    <hr style="border-color: #C66F3D; border-width: 3px;">
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Total Characters Stat -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="card stat-card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px; height: 100%;">
+                        <div class="card-body text-center">
+                            <h6 style="color: #C66F3D; font-weight: 700; margin-bottom: 10px;">
+                                <i class="fas fa-keyboard fa-2x"></i>
+                            </h6>
+                            <h3 id="statTotalChars" style="color: #234756; font-weight: 700;">0</h3>
+                            <p style="color: #666; margin: 0;">Total Characters</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Words Stat -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="card stat-card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px; height: 100%;">
+                        <div class="card-body text-center">
+                            <h6 style="color: #C66F3D; font-weight: 700; margin-bottom: 10px;">
+                                <i class="fas fa-align-left fa-2x"></i>
+                            </h6>
+                            <h3 id="statTotalWords" style="color: #234756; font-weight: 700;">0</h3>
+                            <p style="color: #666; margin: 0;">Total Words</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sessions Stat -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="card stat-card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px; height: 100%;">
+                        <div class="card-body text-center">
+                            <h6 style="color: #C66F3D; font-weight: 700; margin-bottom: 10px;">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </h6>
+                            <h3 id="statSessions" style="color: #234756; font-weight: 700;">0</h3>
+                            <p style="color: #666; margin: 0;">Sessions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typing Speed Stat -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="card stat-card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px; height: 100%;">
+                        <div class="card-body text-center">
+                            <h6 style="color: #C66F3D; font-weight: 700; margin-bottom: 10px;">
+                                <i class="fas fa-tachometer-alt fa-2x"></i>
+                            </h6>
+                            <h3 id="statSpeed" style="color: #234756; font-weight: 700;">0</h3>
+                            <p style="color: #666; margin: 0;">Characters/min</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-4">
+                <!-- Character Distribution Chart -->
+                <div class="col-lg-6">
+                    <div class="card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px;">
+                        <div class="card-header" style="background-color: #234756; border-radius: 10px 10px 0 0; padding: 20px;">
+                            <h5 class="mb-0" style="color: #fff;"><i class="fas fa-chart-pie"></i> Character Distribution</h5>
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <canvas id="charDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typing Progress Chart -->
+                <div class="col-lg-6">
+                    <div class="card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px;">
+                        <div class="card-header" style="background-color: #234756; border-radius: 10px 10px 0 0; padding: 20px;">
+                            <h5 class="mb-0" style="color: #fff;"><i class="fas fa-chart-line"></i> Typing Progress</h5>
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <canvas id="typingProgressChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="container my-5">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 style="color: #234756; font-weight: 700;">
+                        <i class="fas fa-history"></i> Typing History
+                    </h2>
+                    <hr style="border-color: #C66F3D; border-width: 3px;">
+                </div>
+            </div>
+
+            <!-- History Controls -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn" id="exportHistoryBtn" style="background-color: #234756; color: #fff; border: none;">
+                            <i class="fas fa-download"></i> Export as CSV
+                        </button>
+                        <button class="btn" id="clearHistoryBtn" style="background-color: #C66F3D; color: #fff; border: none;">
+                            <i class="fas fa-trash-alt"></i> Clear History
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" style="background-color: #EAEAEA; border: 2px solid #234756; border-radius: 12px;">
+                        <div class="card-body" style="padding: 25px;">
+                            <table id="historyTable" class="table table-striped" style="background-color: #fff;">
+                                <thead style="background-color: #234756; color: #fff;">
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Text Preview</th>
+                                        <th>Characters</th>
+                                        <th>Words</th>
+                                        <th>Duration (sec)</th>
+                                        <th>Speed (chars/min)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-5 py-4" style="background-color: #EAEAEA; border-top: 2px solid #234756;">
+            <div class="container text-center">
+                <p style="color: #234756; margin: 0;">
+                    <strong>&copy; 2026 BT Amharic Keyboard</strong> - Type Amharic with Ease
+                </p>
+                <p style="color: #666; margin-top: 10px;">
+                    Designed to make Amharic typing fast, easy, and accessible
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
